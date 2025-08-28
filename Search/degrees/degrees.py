@@ -100,33 +100,30 @@ def shortest_path(source, target):
 
     frontier.add(Node(source, None, neighbors_for_person(source)))
 
-    while True:
-        if not(frontier.empty()):
-            node = frontier.remove()
-            # node.print()
-            visited.add(node.state)
-            if node.state == target:
-                break
-            else:
-                for (movie_id, person_id) in neighbors_for_person(node.state):
-                    if frontier.contains_state(person_id) or (person_id in visited):
-                        continue
-                    else:
-                        frontier.add(Node(person_id, node, movie_id))
+    while not(frontier.empty()):
+        node = frontier.remove()
+        visited.add(node.state)
+
+        # Check if this is the goal state
+        if node.state == target:
+            # reconstruct the path for the expected return type
+            path = []
+            while node.parent is not None:
+                path.append((node.action, node.state))
+                node = node.parent
+
+            path.reverse()
+            return path
         else:
-            return None
+            for (movie_id, person_id) in neighbors_for_person(node.state):
+                if frontier.contains_state(person_id) or (person_id in visited):
+                    continue
+                else:
+                    frontier.add(Node(person_id, node, movie_id))
+
+    return None
 
 
-
-    # reconstruct the path for the expected return type
-    path = []
-
-    while node.parent is not None:
-        path.append((node.action, node.state))
-        node = node.parent
-
-    path.reverse()
-    return path
 
 
 def person_id_for_name(name):
