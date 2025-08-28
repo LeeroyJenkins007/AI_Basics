@@ -114,7 +114,7 @@ def shortest_path(source, target):
             return path[::-1]
         else:
             for (movie_id, person_id) in neighbors_for_person(node.state):
-                if person_id not in visited and not frontier.contains_state(person_id:)
+                if person_id not in visited and not frontier.contains_state(person_id):
                     frontier.add(Node(person_id, node, movie_id))
 
     return None
