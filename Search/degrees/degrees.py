@@ -103,6 +103,7 @@ def shortest_path(source, target):
     while True:
         if not(frontier.empty()):
             node = frontier.remove()
+            node.print()
             visited.add(node.state)
             if node.state == target:
                 break
@@ -114,7 +115,7 @@ def shortest_path(source, target):
                         frontier.add(Node(person_id, node, movie_id))
         else:
             return None
-    
+
 
 
     # reconstruct the path for the expected return type
@@ -123,7 +124,7 @@ def shortest_path(source, target):
     while node.parent is not None:
         path.append((node.action, node.state))
         node = node.parent
-    
+
     path.reverse()
     return path
 
