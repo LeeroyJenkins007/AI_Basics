@@ -4,7 +4,7 @@ class Node():
         self.parent = parent
         self.action = action
     def print(self):
-        print("[" + self.state + ", " self.parent + ", " + self.action + "]")
+        print("[" + str(self.state) + ", " str(self.parent) + ", " + str(self.action) + "]")
 
 
 class StackFrontier():
