@@ -103,12 +103,12 @@ def shortest_path(source, target):
     while True:
         if not(frontier.empty()):
             node = frontier.remove()
-            node.print()
+            # node.print()
             visited.add(node.state)
             if node.state == target:
                 break
             else:
-                for (movie_id, person_id) in neighbors_for_person(source):
+                for (movie_id, person_id) in neighbors_for_person(node.state):
                     if frontier.contains_state(person_id) or (person_id in visited):
                         continue
                     else:
