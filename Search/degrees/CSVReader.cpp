@@ -7,11 +7,16 @@
 #include "CSVReader.hpp"
 
 // constructor
-CSVReader::CSVReader(const std::string& filename){
+CSVReader::CSVReader(const std::string& filename, bool hasHeader){
     file.open(filename);
 
     if(!file.is_open()){
         throw std::runtime_error("Could not open file: " + filename);
+    }
+
+    mHasHeader = hasHeader;
+    if(mHasHeader){
+        readRow(mHeaders);
     }
 }
 
@@ -27,6 +32,10 @@ bool CSVReader::readRow(std::vector<std::string>& row){
     parseLine(line, row);
     return true;
 
+}
+
+std::vector<std::string> CSVReader::getHeader() const {
+    return mHeaders;
 }
 
 // private methods
