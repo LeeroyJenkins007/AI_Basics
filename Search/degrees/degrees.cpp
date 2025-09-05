@@ -155,6 +155,7 @@ std::string person_id_for_name(std::string name){
         std::exit(EXIT_FAILURE);
     }
 
+    std::cout << "ID: " << names.at(name) << std::endl;
     return names.at(name);
 }
 
@@ -166,11 +167,24 @@ std::unordered_set<std::pair<std::string, std::string>, pairHash> neighbors_for_
     std::unordered_set movie_ids = people[person_id].movies;
     std::unordered_set<std::pair<std::string, std::string>, pairHash> neighbors;
 
+    std::cout << "Neighbors for " << person_id << ":\n";
     for(const auto& movie_id : movie_ids){
-        for(const auto& person_id : movies[movie_id].stars){
-            neighbors.insert({movie_id, person_id});
+        std::cout << "Movies: " << movie_id << "\n";
+        for(const auto& neighbor_id : movies[movie_id].stars){
+            
+            neighbors.insert({movie_id, neighbor_id});
         }
     }
+
+    
+    std::string pmovie_id;
+    std::string pneighbor_id;
+    for(const auto& pair : neighbors){
+        pmovie_id = pair.first;
+        pneighbor_id = pair.second;
+        std::cout << "(" << pmovie_id << ", " << pneighbor_id << ")\n";
+    }
+
     return neighbors;
 }
 
@@ -191,14 +205,20 @@ std::vector<std::pair<std::string, std::string>> shortest_path(std::string sourc
     {
         Node newNode = Node(source, nullptr, "");
         frontier.add(&newNode);
+        std::cout << "FRONT: " << newNode.state << "\n";
     }
 
     while(!frontier.empty()){
         Node* node = frontier.remove();
         visited.insert(node->state);
+        for(const Node* node : frontier){
+            std::cout << "FRONT: " << node->state << "\n";
+        }
 
         if (node->state == target){
 
+            std::cout << "Found Target!\n";
+            // reverse path
             while(node->parent != nullptr){
                 std::pair<std::string, std::string> newPair = {node->action, node->state};
                 path.insert(path.begin(), newPair);
@@ -206,7 +226,6 @@ std::vector<std::pair<std::string, std::string>> shortest_path(std::string sourc
             }
             break;
 
-            //std::reverse(path.begin(), path.end());
         }else{
             for(const auto& pair : neighbors_for_person(node->state)){
 

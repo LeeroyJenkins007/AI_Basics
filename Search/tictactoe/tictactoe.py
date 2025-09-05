@@ -3,6 +3,7 @@ Tic Tac Toe Player
 """
 
 import math
+import copy
 
 X = "X"
 O = "O"
@@ -35,39 +36,104 @@ def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
     """
-    raise NotImplementedError
+    action_set = set()
+
+    for i, row in enumerate(board):
+        for j, val in enumerate(row):
+            if val is not None:
+                action_set.add((i, j))
+
+    return action_set
 
 
 def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    raise NotImplementedError
+    if board[action[0]][action[1]] is None:
+        raise NameError('Not a valid action for this board state')
+    
+
+    result_board = copy.deepcopy(board)
+
+    result_board[action[0]][action[1]] = player(board)
+    return result_board
 
 
 def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    raise NotImplementedError
+
+    check_spaces = []
+    blength = len(board)
+    winner = None
+    
+    # adds rows to the checklist
+    check_spaces.extend(board)
+
+    # adds columns to the checklist
+    columns = [[row[col] for row in board] for col in range(blength)]
+    check_spaces.extend(columns)
+
+    # adds diagnals
+    check_spaces.append([board[i][i] for i in range(blength)])
+    check_spaces.append([board[i][blength-i] for i in range(blength)])
+
+
+    for test in check_spaces:
+        if test.count(X) == 3:
+            winner = X
+            break
+        elif test.count(O) == 3:
+            winner = O
+            break
+
+    return winner
+
+
 
 
 def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    raise NotImplementedError
+    if winner(board) is None or sum(row.count(None) for row in board) > 0:
+        return False
+    else:
+        return True
+
 
 
 def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    raise NotImplementedError
+    theWinner = winner(board)
+
+    if theWinner == X:
+        val = 1
+    elif theWinner == O:
+        val = -1
+    else:
+        val = 0
+
+    return val
 
 
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
+    if terminal(board):
+        return None
+    else:
+        
+        raise NotImplementedError
+
+
+def max_value():
+    raise NotImplementedError
+
+def min_value():
     raise NotImplementedError
