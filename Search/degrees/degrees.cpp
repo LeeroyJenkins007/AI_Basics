@@ -177,13 +177,13 @@ std::unordered_set<std::pair<std::string, std::string>, pairHash> neighbors_for_
     }
 
     
-    std::string pmovie_id;
-    std::string pneighbor_id;
-    for(const auto& pair : neighbors){
-        pmovie_id = pair.first;
-        pneighbor_id = pair.second;
-        std::cout << "(" << pmovie_id << ", " << pneighbor_id << ")\n";
-    }
+   // std::string pmovie_id;
+    //std::string pneighbor_id;
+    //for(const auto& pair : neighbors){
+    //    pmovie_id = pair.first;
+    //    pneighbor_id = pair.second;
+    //    std::cout << "(" << pmovie_id << ", " << pneighbor_id << ")\n";
+    //}
 
     return neighbors;
 }
@@ -203,8 +203,8 @@ std::vector<std::pair<std::string, std::string>> shortest_path(std::string sourc
 
     std::vector<std::pair<std::string, std::string>> path;
     {
-        Node newNode = Node(source, nullptr, "");
-        frontier.add(&newNode);
+        Node* newNode = new Node(source, nullptr, "");
+        frontier.add(newNode);
         std::cout << "FRONT: " << newNode.state << "\n";
     }
 
@@ -224,17 +224,20 @@ std::vector<std::pair<std::string, std::string>> shortest_path(std::string sourc
                 path.insert(path.begin(), newPair);
                 node = node->parent;
             }
-            break;
+            
+            return path;
 
         }else{
             for(const auto& pair : neighbors_for_person(node->state)){
 
                 bool inVisited = !(visited.find(pair.second) == visited.end());
-                bool inFrontier = frontier.contains_state(node->state);
+                bool inFrontier = frontier.contains_state(pair.second);
 
+                //std::cout << pair.second << " is in Visited? " << std::to_string(inVisited) << " and in Frontier? " << std::to_string(inFrontier) << "\n";
                 if(!inVisited && !inFrontier){
-                    Node newNode = Node(pair.second, node, pair.first);
-                    frontier.add(&newNode);
+                    std::cout << "Adding to the frontier\n";
+                    Node* newNode = new Node(pair.second, node, pair.first);
+                    frontier.add(newNode);
                 }
             }
         }
