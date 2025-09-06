@@ -155,7 +155,7 @@ std::string person_id_for_name(std::string name){
         std::exit(EXIT_FAILURE);
     }
 
-    std::cout << "ID: " << names.at(name) << std::endl;
+    //std::cout << "ID: " << names.at(name) << std::endl;
     return names.at(name);
 }
 
@@ -167,9 +167,9 @@ std::unordered_set<std::pair<std::string, std::string>, pairHash> neighbors_for_
     std::unordered_set movie_ids = people[person_id].movies;
     std::unordered_set<std::pair<std::string, std::string>, pairHash> neighbors;
 
-    std::cout << "Neighbors for " << person_id << ":\n";
+    //std::cout << "Neighbors for " << person_id << ":\n";
     for(const auto& movie_id : movie_ids){
-        std::cout << "Movies: " << movie_id << "\n";
+        //std::cout << "Movies: " << movie_id << "\n";
         for(const auto& neighbor_id : movies[movie_id].stars){
             
             neighbors.insert({movie_id, neighbor_id});
@@ -205,26 +205,28 @@ std::vector<std::pair<std::string, std::string>> shortest_path(std::string sourc
     {
         Node* newNode = new Node(source, nullptr, "");
         frontier.add(newNode);
-        std::cout << "FRONT: " << newNode->state << "\n";
+        //std::cout << "FRONT: " << newNode->state << "\n";
     }
 
     while(!frontier.empty()){
         Node* node = frontier.remove();
         visited.insert(node->state);
-        for(const Node* node : frontier){
-            std::cout << "FRONT: " << node->state << "\n";
-        }
+        //for(const Node* node : frontier){
+        //    std::cout << "FRONT: " << node->state << "\n";
+        //}
 
         if (node->state == target){
 
-            std::cout << "Found Target!\n";
+            //std::cout << "Found Target!\n";
             // reverse path
-            while(node->parent != nullptr){
-                std::pair<std::string, std::string> newPair = {node->action, node->state};
-                path.insert(path.begin(), newPair);
+            while(node != nullptr){
+                // check when at source node via action==""
+                if(!node->action.empty()){
+                    path.insert(path.begin(), {node->action, node->state});
+                }
                 node = node->parent;
             }
-            delete node;
+            //delete node;
             return path;
 
         }else{
@@ -235,13 +237,13 @@ std::vector<std::pair<std::string, std::string>> shortest_path(std::string sourc
 
                 //std::cout << pair.second << " is in Visited? " << std::to_string(inVisited) << " and in Frontier? " << std::to_string(inFrontier) << "\n";
                 if(!inVisited && !inFrontier){
-                    std::cout << "Adding to the frontier\n";
+                    //std::cout << "Adding to the frontier\n";
                     Node* newNode = new Node(pair.second, node, pair.first);
                     frontier.add(newNode);
                 }
             }
         }
-        delete node;
+        //delete node;
     }
     
     return path;
@@ -285,11 +287,11 @@ int main(int argc, char* argv[]) {
         std::cout << std::to_string(degrees) << " degrees of separation.\n";
 
         for (int i = 0; i < degrees; i++){
-            std::string person1 = people[path[i].second].name;
-            std::string person2 = people[path[i+1].second].name;
-            std::string movie = movies[path[i+1].first].title;
+            std::string person1 = (i == 0 ? people[source].name : people[path[i-1].second].name);
+            std::string person2 = people[path[i].second].name;
+            std::string movie = movies[path[i].first].title;
 
-            std::cout << std::to_string(i+1) << ": " << person1 << " and " << person2 << " starred in " << movie << std::endl;
+            std::cout << i+1 << ": " << person1 << " and " << person2 << " starred in " << movie << std::endl;
         }
     }
 
