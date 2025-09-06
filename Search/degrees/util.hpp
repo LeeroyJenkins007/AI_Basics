@@ -22,6 +22,8 @@ public:
     bool contains_state(const std::string);
     bool empty();
     Node* remove();
+    void clear();
+    ~StackFrontier();
 
     // Iterator access
     auto begin() {return frontier.begin();}

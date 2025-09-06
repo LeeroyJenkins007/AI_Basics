@@ -205,7 +205,7 @@ std::vector<std::pair<std::string, std::string>> shortest_path(std::string sourc
     {
         Node* newNode = new Node(source, nullptr, "");
         frontier.add(newNode);
-        std::cout << "FRONT: " << newNode.state << "\n";
+        std::cout << "FRONT: " << newNode->state << "\n";
     }
 
     while(!frontier.empty()){
@@ -224,7 +224,7 @@ std::vector<std::pair<std::string, std::string>> shortest_path(std::string sourc
                 path.insert(path.begin(), newPair);
                 node = node->parent;
             }
-            
+            delete node;
             return path;
 
         }else{
@@ -241,6 +241,7 @@ std::vector<std::pair<std::string, std::string>> shortest_path(std::string sourc
                 }
             }
         }
+        delete node;
     }
     
     return path;

@@ -34,7 +34,6 @@ Node* StackFrontier::remove(){
     }
 }
 
-
 // same methods with the exception that a queue pops off nodes from the front
 Node* QueueFrontier::remove(){
     if (frontier.empty()) {
@@ -45,4 +44,18 @@ Node* QueueFrontier::remove(){
         frontier.erase(frontier.begin());
         return node;
     }
+}
+
+
+// clears the frontier of Nodes
+void StackFrontier::clear(){
+    while(!frontier.empty()){
+        Node* node = StackFrontier::remove();
+        delete node;
+    }
+}
+
+// destructor
+StackFrontier::~StackFrontier(){
+    StackFrontier::clear();
 }
