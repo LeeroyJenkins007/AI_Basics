@@ -176,14 +176,6 @@ std::unordered_set<std::pair<std::string, std::string>, pairHash> neighbors_for_
         }
     }
 
-    
-   // std::string pmovie_id;
-    //std::string pneighbor_id;
-    //for(const auto& pair : neighbors){
-    //    pmovie_id = pair.first;
-    //    pneighbor_id = pair.second;
-    //    std::cout << "(" << pmovie_id << ", " << pneighbor_id << ")\n";
-    //}
 
     return neighbors;
 }
@@ -205,19 +197,14 @@ std::vector<std::pair<std::string, std::string>> shortest_path(std::string sourc
     {
         Node* newNode = new Node(source, nullptr, "");
         frontier.add(newNode);
-        //std::cout << "FRONT: " << newNode->state << "\n";
     }
 
     while(!frontier.empty()){
         Node* node = frontier.remove();
         visited.insert(node->state);
-        //for(const Node* node : frontier){
-        //    std::cout << "FRONT: " << node->state << "\n";
-        //}
 
         if (node->state == target){
 
-            //std::cout << "Found Target!\n";
             // reverse path
             while(node != nullptr){
                 // check when at source node via action==""
@@ -226,7 +213,7 @@ std::vector<std::pair<std::string, std::string>> shortest_path(std::string sourc
                 }
                 node = node->parent;
             }
-            //delete node;
+            frontier.empty();
             return path;
 
         }else{
@@ -243,9 +230,9 @@ std::vector<std::pair<std::string, std::string>> shortest_path(std::string sourc
                 }
             }
         }
-        //delete node;
     }
     
+    frontier.empty();
     return path;
 }
 
