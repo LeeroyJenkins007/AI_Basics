@@ -35,13 +35,6 @@ struct Movie {
 };
 
 
-//struct pair_equal {
-//    bool operator()(const std::pair<std::string, std::string>& a,
-//                    const std::pair<std::string, std::string>& b) const {
-//        return a.first == b.first && a.second == b.second;                
-//    }
-//};
-
 struct pairHash{
     size_t operator() (const std::pair<std::string, std::string>& x) const{
         auto h1 = std::hash<std::string>{}(x.first);
@@ -56,7 +49,7 @@ struct pairHash{
 std::unordered_map<std::string, Person> people;
 
 // Maps names to a set of corresponding person_ids
-std::unordered_map<std::string, std::string> names;
+std::unordered_map<std::string, std::unordered_set<std::string>> names;
 
 // Maps movie_ids to a dictionary of: title, year, stars (a set of person_ids)
 std::unordered_map<std::string, Movie> movies;
@@ -83,11 +76,9 @@ void load_data(const std::string& directory){
                 c = std::tolower(c);
             });
 
-            if(names.find(person.name) == names.end()){
-                names[person.name] = row[0];
-            }else{
-                names.insert({person.name, row[0]});
-            }
+            // regardless of in the map or not itll add or create accordingly
+            names[person.name].insert(row[0]); 
+
         }
     }
     
@@ -149,14 +140,42 @@ std::string person_id_for_name(std::string name){
                 c = std::tolower(c);
             });
 
+    
     if (names.find(name) == names.end())
     {
         std::cerr << "There is no one by the name of " << name << " in the database" << std::endl;
         std::exit(EXIT_FAILURE);
     }
 
-    //std::cout << "ID: " << names.at(name) << std::endl;
-    return names.at(name);
+
+    const std::unordered_set<std::string>& ids = names[name];
+
+    if (ids.size() > 1){
+        std::cout << "Which " << name << "?\n";
+
+        for (const auto& id : ids){
+            const Person &person = people[id];
+            std::cout << "ID: " << id 
+                      << ", Name: " << person.name 
+                      << ", Birth: " << person.birth << "\n";
+        }
+        std::string person_id;
+        while(true){
+            std::cout << "Intended Person ID: ";
+            std::getline(std::cin, person_id);
+
+            if (ids.find(person_id) == ids.end()){
+                std::cerr << "That is not a valid ID. Try again. \n";
+            }else{
+                return person_id;
+            } 
+        }
+    }else{
+        // return the first and only element in the set of name_ids
+        return *ids.begin();
+    }
+
+    
 }
 
 /*
@@ -167,9 +186,7 @@ std::unordered_set<std::pair<std::string, std::string>, pairHash> neighbors_for_
     std::unordered_set movie_ids = people[person_id].movies;
     std::unordered_set<std::pair<std::string, std::string>, pairHash> neighbors;
 
-    //std::cout << "Neighbors for " << person_id << ":\n";
     for(const auto& movie_id : movie_ids){
-        //std::cout << "Movies: " << movie_id << "\n";
         for(const auto& neighbor_id : movies[movie_id].stars){
             
             neighbors.insert({movie_id, neighbor_id});
@@ -213,7 +230,7 @@ std::vector<std::pair<std::string, std::string>> shortest_path(std::string sourc
                 }
                 node = node->parent;
             }
-            frontier.empty();
+            frontier.clear();
             return path;
 
         }else{
@@ -222,9 +239,7 @@ std::vector<std::pair<std::string, std::string>> shortest_path(std::string sourc
                 bool inVisited = !(visited.find(pair.second) == visited.end());
                 bool inFrontier = frontier.contains_state(pair.second);
 
-                //std::cout << pair.second << " is in Visited? " << std::to_string(inVisited) << " and in Frontier? " << std::to_string(inFrontier) << "\n";
                 if(!inVisited && !inFrontier){
-                    //std::cout << "Adding to the frontier\n";
                     Node* newNode = new Node(pair.second, node, pair.first);
                     frontier.add(newNode);
                 }
@@ -232,7 +247,7 @@ std::vector<std::pair<std::string, std::string>> shortest_path(std::string sourc
         }
     }
     
-    frontier.empty();
+    frontier.clear();
     return path;
 }
 
