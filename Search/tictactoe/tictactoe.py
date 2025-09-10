@@ -128,12 +128,41 @@ def minimax(board):
     if terminal(board):
         return None
     else:
+        v_old = float('-inf')
+        if player(board) == X:
+            vals = [(min_value(result(board, action)), action) for action in actions(board)]  
+            for pair in vals:
+                v_new = max(pair[0], v_old)
+                if v_new == v_old:
+                    next_move = pair[1]
+                v_old = v_new
+        else:
+            v_old - float('+inf')
+            vals = [(max_value(result(board, action)), action) for action in actions(board)]
+            for pair in vals:
+                v_new = min(pair[0], v_old)
+                if v_new == v_old:
+                    next_move = pair[1]
+                v_old = v_new
+    return next_move
+
+
+def max_value(board):
+    v = float('-inf')
+    if terminal(board):
+        return utility(board)
+    else:
+        for action in actions(board):
+            v = max(v, min_value(result(board, action)))
         
-        raise NotImplementedError
+        return v
 
+def min_value(board):
+    v = float('+inf')
+    if terminal(board):
+        return utility(board)
+    else:
+        for action in actions(board):
+            v = min(v, max_value(result(board, action)))
 
-def max_value():
-    raise NotImplementedError
-
-def min_value():
-    raise NotImplementedError
+        return v
