@@ -40,7 +40,7 @@ def actions(board):
 
     for i, row in enumerate(board):
         for j, val in enumerate(row):
-            if val is not None:
+            if val is None:
                 action_set.add((i, j))
 
     return action_set
@@ -50,7 +50,9 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    if board[action[0]][action[1]] is None:
+
+    # there is already an X or an O then
+    if board[action[0]][action[1]] is not None:
         raise NameError('Not a valid action for this board state')
     
 
@@ -78,7 +80,7 @@ def winner(board):
 
     # adds diagnals
     check_spaces.append([board[i][i] for i in range(blength)])
-    check_spaces.append([board[i][blength-i] for i in range(blength)])
+    check_spaces.append([board[i][blength-1-i] for i in range(blength)])
 
 
     for test in check_spaces:
@@ -98,11 +100,10 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    if winner(board) is None or sum(row.count(None) for row in board) > 0:
-        return False
-    else:
+    if winner(board) != None or sum(row.count(None) for row in board) == 0:
         return True
-
+    else:
+        return False
 
 
 def utility(board):
@@ -128,22 +129,20 @@ def minimax(board):
     if terminal(board):
         return None
     else:
-        v_old = float('-inf')
         if player(board) == X:
-            vals = [(min_value(result(board, action)), action) for action in actions(board)]  
-            for pair in vals:
-                v_new = max(pair[0], v_old)
-                if v_new == v_old:
-                    next_move = pair[1]
-                v_old = v_new
+            previous_score = float('-inf')
+            for action in actions(board):
+                cur_score = min_value(result(board, action))
+                if  cur_score >= previous_score:
+                    next_move = action
+                    previous_score = cur_score
         else:
-            v_old - float('+inf')
-            vals = [(max_value(result(board, action)), action) for action in actions(board)]
-            for pair in vals:
-                v_new = min(pair[0], v_old)
-                if v_new == v_old:
-                    next_move = pair[1]
-                v_old = v_new
+            previous_score = float('+inf')
+            for action in actions(board):
+                cur_score = max_value(result(board, action))
+                if cur_score <= previous_score:
+                    next_move = action
+                    previous_score = cur_score
     return next_move
 
 
