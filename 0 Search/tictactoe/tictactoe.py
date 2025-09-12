@@ -163,7 +163,7 @@ def min_value(board, alpha = float('-inf'), beta = float('inf')):
         return utility(board)
     v = float('+inf')
     for action in actions(board):
-        v = min(v, max_value(result(board, action)))
+        v = min(v, max_value(result(board, action), alpha, beta))
         if v <= alpha:
             return v
         beta = min(beta, v)
