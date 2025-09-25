@@ -75,9 +75,9 @@ knowledge3 = And(
     Not(And(CKnight, CKnave)),
 
     # puzzle specific
-    Implication(BKnight, Implication(AKnight, AKnave)),
-    Implication(BKnight, CKnave),
-    Implication(CKnight, AKnight)
+    Biconditional(BKnight, Biconditional(AKnight, AKnave)),
+    Biconditional(CKnight, AKnight),
+    Biconditional(BKnight, CKnave)
 )
 
 
