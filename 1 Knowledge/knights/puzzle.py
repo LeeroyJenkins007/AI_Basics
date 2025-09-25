@@ -23,7 +23,6 @@ knowledge0 = And(
 # Puzzle 1
 # A says "We are both knaves."
 # B says nothing.
-Statement = Symbol("We are both Knaves")
 knowledge1 = And(
     # rules of the game
     Or(AKnave, AKnight),
@@ -33,8 +32,7 @@ knowledge1 = And(
     Not(And(BKnave, BKnight)),
 
     # Puzzle Specific
-    Implication(AKnight, Statement),
-    Implication(AKnave, Not(Statement))
+    Biconditional(AKnight, And(AKnave, BKnave))
 )
 
 # Puzzle 2
@@ -49,13 +47,15 @@ knowledge2 = And(
     Not(And(BKnave, BKnight)),
 
     # puzzle specific
-    Implication(AKnight, 
-        Or(Biconditional(AKnight, BKnight), 
-        Biconditional(AKnave, BKnave))),
+    Biconditional(AKnight, Or(
+        And(AKnight, BKnight),
+        And(AKnave, BKnave)
+    )),
 
-    Implication(BKnave, 
-        Or(Biconditional(AKnight, BKnight), 
-        Biconditional(AKnave, BKnave)))
+    Biconditional(BKnight, Or(
+        And(AKnight, BKnave),
+        And(AKnave, BKnight)
+    ))
 )
 
 # Puzzle 3
