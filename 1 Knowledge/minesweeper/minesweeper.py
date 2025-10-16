@@ -192,7 +192,35 @@ class MinesweeperAI():
             5) add any new sentences to the AI's knowledge base
                if they can be inferred from existing knowledge
         """
-        raise NotImplementedError
+        
+        self.moves_made.add(cell)
+        self.mark_safe(cell)
+
+        cells = set()
+        # get all the adjacent cells
+        for i in range(cell[0] - 1, cell[0] + 2):
+            for j in range(cell[1] - 1, cell[1] + 2):
+                if 0 < i <= self.height and 0 < j <= self.width:
+                    cells.add((i, j))
+
+        sentence = Sentence(cells, count)
+        self.knowledge.append(sentence)
+
+        # all surrounding cells are safe, so update the KB
+        if count == 0:
+            for safe_cell in cells:
+                self.mark_safe(safe_cell)
+
+        # all surrounding cells are mines, so update the KB
+        if len(cells) == count:
+            for mine_cell in cells:
+                self.mark_mine(mine_cell)
+
+        # go through KB now and check for new knowns
+        for sentence in self.knowledge:
+            for k_min in sentence.known_mine():
+                print("Do Something")
+
 
     def make_safe_move(self):
         """
@@ -203,7 +231,9 @@ class MinesweeperAI():
         This function may use the knowledge in self.mines, self.safes
         and self.moves_made, but should not modify any of those values.
         """
-        raise NotImplementedError
+        for cell in self.safes:
+            if cell in self.moves_made and cell not in self.mines:
+                return cell
 
     def make_random_move(self):
         """
@@ -212,4 +242,10 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        raise NotImplementedError
+        while True:
+            i = random.randrange(self.height)
+            j = random.randrange(self.width)
+            rand_cell = (i, j)
+            # check on the random cell
+            if rand_cell not in self.moves_made and rand_cell not in self.mines:
+                return rand_cell
