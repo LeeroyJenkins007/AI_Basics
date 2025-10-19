@@ -260,7 +260,7 @@ class MinesweeperAI():
             # go through KB now and check for new knowns
             for s1 in self.knowledge:
                 for s2 in self.knowledge:
-                    if s1 == s2 or len(s1.cells) or len(s2.cells):
+                    if s1 == s2 or len(s1.cells) == 0 or len(s2.cells) == 0:
                         continue
                     if s1.cells.issubset(s2.cells):
                         new_cells = s2.cells - s1.cells
@@ -305,9 +305,21 @@ class MinesweeperAI():
         if len(checked_cells) == self.width * self.height:
             return None
 
+        # not the best, this could theoretically run forever, but is not really going to happen
         while True:
             i = random.randrange(self.height)
             j = random.randrange(self.width)
             rand_cell = (i, j)
             if rand_cell not in checked_cells:
                 return rand_cell
+            
+        # a better build:
+        # remaining_cells = [
+        #           (i, j)
+        #           for i in range(self.height)
+        #           for j in range(self.width)
+        #           if (i, j) not in self.moves_made and (i, j) not in self.mines
+        #           ]
+        # if remaining_cells:
+        #           return random.choice(remaining_cells)
+        # return None
