@@ -88,11 +88,34 @@ def sample_pagerank(corpus, damping_factor, n):
     """
     pageRank = dict()
 
-    rand_page = random.choice(list(corpus.keys()))
+    prev_page = random.choice(list(corpus.keys()))
 
     for i in range(n):
-        page = corpus[rand_page]
+        page = corpus[prev_page]
         probs = transition_model(corpus, page, damping_factor)
+        # Option 1: represent the probabilities in the transition model as a 
+        # cumulative distribution and generate a random float to select the 
+        # next page
+        cumulative = 0
+        idx = 0
+        choice = random.random()
+        for new_page in probs:
+            cumulative = cumulative + probs[new_page]
+            if cumulative >= choice:
+                next_page = new_page
+                break
+            else:
+                print("Something broke")
+        # Option 2: use the ransom.choices() to select it
+        if not pageRank[prev_page]:
+            pageRank[prev_page] = 1
+        else:
+            pageRank[prev_page] = pageRank[prev_page] + 1
+        
+        prev_page = next_page
+
+    for page in pageRank:
+        pageRank[page] = pageRank[page] / n
 
     
 
