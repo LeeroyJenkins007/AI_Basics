@@ -132,7 +132,27 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+
+    pageRank = dict()
+
+    # initialize each page to 1 / N
+    n = len(corpus)
+    if n <= 0:
+        print("Corpus is empty")
+        return pageRank
+    
+    for page in corpus:
+        pageRank[page] = 1 / n
+
+    tol = 0
+    while tol < 0.001:
+
+        new_prob = ((1 - damping_factor) / n) + (damping_factor * sum())
+
+        tol = abs(old_prob - new_prob)
+
+    return pageRank
+    
 
 
 if __name__ == "__main__":
