@@ -134,7 +134,7 @@ def iterate_pagerank(corpus, damping_factor):
     """
 
     pageRank = dict()
-
+    newPageRank = dict()
     # initialize each page to 1 / N
     n = len(corpus)
     if n <= 0:
@@ -146,10 +146,18 @@ def iterate_pagerank(corpus, damping_factor):
 
     tol = 0
     while tol < 0.001:
+        tol = 0
+        for page in pageRank:
+             prSum = 0
+            for linkedPage in corpus:
+                if any(corpus[linkedPage] == page):
+                    # do math
+                    
+            newPageRank[page] = ((1 - damping_factor) / n) + (damping_factor * prSum)
 
-        new_prob = ((1 - damping_factor) / n) + (damping_factor * sum())
+            tol = max(tol, abs(newPageRank[page] - pageRank[page]))
 
-        tol = abs(old_prob - new_prob)
+        pageRank = newPageRank
 
     return pageRank
     
