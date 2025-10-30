@@ -161,12 +161,13 @@ def iterate_pagerank(corpus, damping_factor):
                     print("PageRank Sum: ", prSum)
                     
             newPageRank[page] = ((1 - damping_factor) / n) + (damping_factor * prSum)
-
+            print("PrevPR: ", prevPageRank[page], "NewPR: ", newPageRank[page])
             tol = max(tol, abs(newPageRank[page] - prevPageRank[page]))
             print("Page: ", page, " Tolerance: ", tol)
 
         prevPageRank = newPageRank
         print(tol)
+        print(prevPageRank)
 
     return prevPageRank
     
