@@ -62,17 +62,16 @@ def transition_model(corpus, page, damping_factor):
 
     numPages = len(corpus)
 
-    if not corpus[page]:
-        corpus[page] = set(corpus.keys())
+    # not the best practice, since im modifying the corpus
+    #if not corpus[page]:
+    #    corpus[page] = set(corpus.keys())
+    links = corpus[page] if corpus[page] else set(corpus.keys())
 
     for primary_page in corpus:
-        if primary_page in corpus[page]:
-            linked_page_prob = 1 / len(corpus[page])
-        else:
-            linked_page_prob = 0
-
-        probability = (1-damping_factor)*(1/numPages) + damping_factor*linked_page_prob
-        probabilities[primary_page] = probability
+        prob = (1-damping_factor)/(numPages)
+        if primary_page in links:
+            prob += damping_factor / len(links)
+        probabilities[primary_page] = prob
 
     return probabilities
 
@@ -98,22 +97,21 @@ def sample_pagerank(corpus, damping_factor, n):
         # Option 1: represent the probabilities in the transition model as a 
         # cumulative distribution and generate a random float to select the 
         # next page
-        cumulative = 0
-        idx = 0
-        choice = random.random()
-        for new_page in probs:
-            cumulative = cumulative + probs[new_page]
-            if cumulative >= choice:
-                next_page = new_page
-                break
-        # Option 2: use the ransom.choices() to select it
-        if not pageRank[prev_page]:
-            pageRank[prev_page] = 1
-        else:
-            pageRank[prev_page] = pageRank[prev_page] + 1
+        #cumulative = 0
+        #choice = random.random()
+        #for new_page in probs:
+        #    cumulative = cumulative + probs[new_page]
+        #    if cumulative >= choice:
+        #        next_page = new_page
+        #        break
+        # Option 2: use the random.choices() to select it
+        next_page = random.choices(list(probs.keys()), weights=probs.values(), k=1)[0]
+
+        pageRank[next_page] += 1
         
         prev_page = next_page
 
+    # produce the actual probability given number of times landed on / total number of samples
     for page in pageRank:
         pageRank[page] = pageRank[page] / n
 
@@ -143,19 +141,29 @@ def iterate_pagerank(corpus, damping_factor):
     for page in corpus:
         prevPageRank[page] = 1 / n
 
-    tol = 10
-    while tol > 0.001:
+    while True:
+        newPageRank = {}
         tol = 0
         for page in prevPageRank:
             prSum = 0
             for linkedPage in corpus:
-                if page in corpus[linkedPage]:
-                    prSum = prSum + prevPageRank[linkedPage]/len(corpus[linkedPage])
+                # dont forget, we covered the empty list in sample(initially with transition model function, but changed that a little), but we didn't account for that here
+                if len(corpus[linkedPage]) == 0:
+                    prSum += prevPageRank[linkedPage] / n
+                elif page in corpus[linkedPage]:
+                    prSum += prevPageRank[linkedPage]/len(corpus[linkedPage])
                     
             newPageRank[page] = ((1 - damping_factor) / n) + (damping_factor * prSum)
             tol = max(tol, abs(newPageRank[page] - prevPageRank[page]))
 
+        if tol < 0.001:
+            break
         prevPageRank.update(newPageRank)
+
+    # normalize to ensure total is 1, also helps with floating point issues
+    total = sum(prevPageRank.values())
+    for p in prevPageRank:
+        prevPageRank[p] /= total
 
     return prevPageRank
     
