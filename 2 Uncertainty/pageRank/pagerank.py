@@ -132,8 +132,6 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-
-    print(corpus)
     prevPageRank = dict()
     newPageRank = dict()
     # initialize each page to 1 / N
@@ -145,29 +143,19 @@ def iterate_pagerank(corpus, damping_factor):
     for page in corpus:
         prevPageRank[page] = 1 / n
 
-    print("Starting PR: ", prevPageRank)
-
     tol = 10
     while tol > 0.001:
         tol = 0
         for page in prevPageRank:
             prSum = 0
-            print("Page: ", page)
             for linkedPage in corpus:
-                print("Linked Page: ", linkedPage)
                 if page in corpus[linkedPage]:
-                    print(linkedPage, " links to ", page)
                     prSum = prSum + prevPageRank[linkedPage]/len(corpus[linkedPage])
-                    print("PageRank Sum: ", prSum)
                     
             newPageRank[page] = ((1 - damping_factor) / n) + (damping_factor * prSum)
-            print("PrevPR: ", prevPageRank[page], "NewPR: ", newPageRank[page])
             tol = max(tol, abs(newPageRank[page] - prevPageRank[page]))
-            print("Page: ", page, " Tolerance: ", tol)
 
-        prevPageRank = newPageRank
-        print(tol)
-        print(prevPageRank)
+        prevPageRank.update(newPageRank)
 
     return prevPageRank
     
