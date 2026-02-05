@@ -145,8 +145,20 @@ class CrosswordCreator():
         if arcs is None:
             # better to use deque from the collections library, but keeping is stock for now
             arcs = []
-            
-        raise NotImplementedError
+            for x, y in self.crossword.overlaps.keys():
+                if self.crossword.overlaps[x, y] is not None:
+                    arcs.append((x, y))
+
+        while not empty(arcs):
+            (v1, v2) = arcs.pop()
+            if revise(v1, v2):
+                if empty(self.domains[v1]):
+                    return False
+                else:
+                    for neighbor in self.crossowrds.neighbors(v1):
+                        arcs.addend(neighbor, v1)
+
+        return True
 
     def assignment_complete(self, assignment):
         """
