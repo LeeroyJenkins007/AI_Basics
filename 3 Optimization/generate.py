@@ -1,5 +1,6 @@
 import sys
 
+from collections import deque
 from crossword import *
 
 
@@ -143,20 +144,22 @@ class CrosswordCreator():
         return False if one or more domains end up empty.
         """
         if arcs is None:
-            # better to use deque from the collections library, but keeping is stock for now
-            arcs = []
-            for x, y in self.crossword.overlaps.keys():
-                if self.crossword.overlaps[x, y] is not None:
-                    arcs.append((x, y))
+            queue = dequeue()
+            for v1 in self.crossword.variables:
+                for v2 in self.crossword.neighbors(v1):
+                    queue.append((v1, v2))
+        else:
+            queue = dequeue(arcs)
 
-        while not empty(arcs):
-            (v1, v2) = arcs.pop()
-            if revise(v1, v2):
-                if empty(self.domains[v1]):
+        
+        while queue:
+            v1, v2 = queue.popleft()
+            if self.revise(v1, v2):
+                if not self.domains[v1]:
                     return False
                 else:
-                    for neighbor in self.crossowrds.neighbors(v1):
-                        arcs.addend(neighbor, v1)
+                    for neighbor in self.crossword.neighbors(v1):
+                        queue.append((neighbor, v1))
 
         return True
 
