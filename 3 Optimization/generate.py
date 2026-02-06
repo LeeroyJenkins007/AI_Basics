@@ -144,12 +144,12 @@ class CrosswordCreator():
         return False if one or more domains end up empty.
         """
         if arcs is None:
-            queue = dequeue()
+            queue = deque()
             for v1 in self.crossword.variables:
                 for v2 in self.crossword.neighbors(v1):
                     queue.append((v1, v2))
         else:
-            queue = dequeue(arcs)
+            queue = deque(arcs)
 
         
         while queue:
@@ -168,7 +168,7 @@ class CrosswordCreator():
         Return True if `assignment` is complete (i.e., assigns a value to each
         crossword variable); return False otherwise.
         """
-        raise NotImplementedError
+        return set(assignment.keys()) == self.crossword.variables
 
     def consistent(self, assignment):
         """
