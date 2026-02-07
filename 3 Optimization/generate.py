@@ -175,7 +175,29 @@ class CrosswordCreator():
         Return True if `assignment` is consistent (i.e., words fit in crossword
         puzzle without conflicting characters); return False otherwise.
         """
-        raise NotImplementedError
+        # Check for word length
+        for var in assignment:
+            if len(assignment[var]) != var.length:
+                return False
+            
+        # Check for unique usage of words
+        used_words = set()
+        for var in assignment:
+            word = assignment[var]
+            if word in used_words:
+                return False
+            used_words.add(word)
+        
+        # Check for conflicts with neighbors
+        for var in assignment:
+            for neighbor in self.crossword.neighbors(var):
+                if neighbor in assignment:
+                    i, j = self.crossword.overlap(var, neighbor)
+                    if assignment[var][i] != assignment[neighbor][j]:
+                        return False
+                    
+        return True
+                    
 
     def order_domain_values(self, var, assignment):
         """
@@ -184,7 +206,8 @@ class CrosswordCreator():
         The first value in the list, for example, should be the one
         that rules out the fewest values among the neighbors of `var`.
         """
-        raise NotImplementedError
+        # Just return a list for now, nodifications can wait until the rest of this project is functional
+        return list(self.crossword.domains[var])
 
     def select_unassigned_variable(self, assignment):
         """
@@ -194,7 +217,15 @@ class CrosswordCreator():
         degree. If there is a tie, any of the tied variables are acceptable
         return values.
         """
-        raise NotImplementedError
+        min_domain = len(self.crossword.words)
+        for val in self.domains:
+            if val in assignment:
+                continue
+            cur_len = len(self.domains[val])
+            if  cur_len < min_domain:
+                min_domain = cur_len
+                ret_val = val
+        return ret_val
 
     def backtrack(self, assignment):
         """
