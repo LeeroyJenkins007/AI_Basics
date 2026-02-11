@@ -192,7 +192,7 @@ class CrosswordCreator():
         for var in assignment:
             for neighbor in self.crossword.neighbors(var):
                 if neighbor in assignment:
-                    i, j = self.crossword.overlap(var, neighbor)
+                    i, j = self.crossword.overlaps[var, neighbor]
                     if assignment[var][i] != assignment[neighbor][j]:
                         return False
                     
@@ -207,7 +207,7 @@ class CrosswordCreator():
         that rules out the fewest values among the neighbors of `var`.
         """
         # Just return a list for now, nodifications can wait until the rest of this project is functional
-        return list(self.crossword.domains[var])
+        return list(self.domains[var])
 
     def select_unassigned_variable(self, assignment):
         """
@@ -236,7 +236,20 @@ class CrosswordCreator():
 
         If no assignment is possible, return None.
         """
-        raise NotImplementedError
+
+        if self.assignment_complete(assignment):
+            return assignment
+        
+        var = self.select_unassigned_variable(assignment)
+        for val in self.order_domain_values(var, assignment):
+            if self.consistent(assignment):
+                assignment[var] = val
+                result = self.backtrack(assignment)
+                if result is not None:
+                    return result
+                assignment.pop(var)
+
+        return None
 
 
 def main():
