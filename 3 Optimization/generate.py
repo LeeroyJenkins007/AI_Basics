@@ -207,6 +207,10 @@ class CrosswordCreator():
         that rules out the fewest values among the neighbors of `var`.
         """
         # Just return a list for now, nodifications can wait until the rest of this project is functional
+        domain_len = dict()
+        domain_count = 0
+        for val in self.domains[var]:
+            for neighbor in self.crossword.neighbors(var)
         return list(self.domains[var])
 
     def select_unassigned_variable(self, assignment):
@@ -222,7 +226,7 @@ class CrosswordCreator():
             if val in assignment:
                 continue
             cur_len = len(self.domains[val])
-            if  cur_len < min_domain:
+            if  cur_len <= min_domain:
                 min_domain = cur_len
                 ret_val = val
         return ret_val
