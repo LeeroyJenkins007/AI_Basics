@@ -221,15 +221,21 @@ class CrosswordCreator():
         degree. If there is a tie, any of the tied variables are acceptable
         return values.
         """
-        min_domain = len(self.crossword.words)
-        for val in self.domains:
-            if val in assignment:
+        min_domain = len(self.crossword.words) + 1
+        for var in self.domains:
+            if var in assignment:
                 continue
-            cur_len = len(self.domains[val])
+            cur_len = len(self.domains[var])
             if  cur_len <= min_domain:
-                min_domain = cur_len
-                ret_val = val
-        return ret_val
+                if cur_len < min_domain:
+                    min_domain = cur_len
+                else:
+                    cur_degree = len(self.crossword.neighbors(var))
+                    if cur_degree <= len(self.crosswor.neighbors(ret_var)):
+                        ret_var = var
+                ret_var = var
+                
+        return ret_var
 
     def backtrack(self, assignment):
         """
