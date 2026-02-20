@@ -208,10 +208,13 @@ class CrosswordCreator():
         """
         # Just return a list for now, nodifications can wait until the rest of this project is functional
         domain_len = dict()
-        domain_count = 0
         for val in self.domains[var]:
-            for neighbor in self.crossword.neighbors(var)
-        return list(self.domains[var])
+            domain_count = 0
+            for neighbor in self.crossword.neighbors(var):
+                if val in self.domains[neighbor]:
+                    domain_count += 1
+            domain_len[val] = domain_count
+        return sorted(domain_len)
 
     def select_unassigned_variable(self, assignment):
         """
@@ -231,7 +234,7 @@ class CrosswordCreator():
                     min_domain = cur_len
                 else:
                     cur_degree = len(self.crossword.neighbors(var))
-                    if cur_degree <= len(self.crosswor.neighbors(ret_var)):
+                    if cur_degree <= len(self.crossword.neighbors(ret_var)):
                         ret_var = var
                 ret_var = var
                 
